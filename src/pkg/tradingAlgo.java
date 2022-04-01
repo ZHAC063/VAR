@@ -59,8 +59,14 @@ public class tradingAlgo {
 		
 		for (int x = 0; x < filePaths.size(); x++){
 			meanLog[x] = meanLog[x].divide(new BigDecimal(dataLength) ,d);
-			System.out.println(meanLog[x]);
+			System.out.println("Mean log : " + meanLog[x]);
 		}
+		
+		
+		
+		calcSD(logList,meanLog);
+		
+
 		mean = mean.divide(dataBD, d);	
 		
 		
@@ -111,6 +117,48 @@ public class tradingAlgo {
 	
 	}
 	
+	static void calcSD(BigDecimal[][] logList, BigDecimal[] meanLog) {
+		BigDecimal sum[] = new BigDecimal[filePaths.size()];
+		for(int y = 0; y < filePaths.size(); y++) {
+			for(int x = 0; x < dataLength; x++) {
+				if(sum[y]!=null) {
+					sum[y] = new BigDecimal(Math.pow(sum[y].add(logList[x][y].subtract(meanLog[y])).doubleValue(),2));
+				}
+				else {
+					sum[y] = new BigDecimal(Math.pow(logList[x][y].subtract(meanLog[y]).doubleValue(),2)); 
+				}
+			}
+			System.out.println(sum[y].doubleValue()+"");
+		}
+	}
+
+
+	static void backTest(BigDecimal VAR, BigDecimal[] data) {
+		int numFail = 0;
+		for(int x = 0; x < data.length; x++) {	
+			if(data[x].compareTo(VAR.multiply(new BigDecimal(-1),d))<0) {
+				numFail++;
+			}
+		}
+		
+		System.out.println(numFail+""+ " " + dataLength+"");
+		System.out.print(new BigDecimal(1).subtract(new BigDecimal(numFail).divide(new BigDecimal(dataLength),d)));
+	}
+	
+	
+	static void folderSearch(final File folder) {
+	    for (final File fileEntry : folder.listFiles()) {
+	        if (fileEntry.isDirectory()) {
+	            folderSearch(fileEntry);
+	        } else {
+	            if(fileEntry.getName().contains(".csv")) {
+	                filePaths.add(fileEntry.getPath());
+	            	fileNames.add(fileEntry.getName());
+	            }
+	        }
+	    }
+	}
+	
 	static String[][][] readFiles() throws IOException{
 		final File folder = new File("src\\");
 		folderSearch(folder);
@@ -141,19 +189,6 @@ public class tradingAlgo {
 			br.close();
 		}
 		return Data;
-	}
-	
-	static void folderSearch(final File folder) {
-	    for (final File fileEntry : folder.listFiles()) {
-	        if (fileEntry.isDirectory()) {
-	            folderSearch(fileEntry);
-	        } else {
-	            if(fileEntry.getName().contains(".csv")) {
-	                filePaths.add(fileEntry.getPath());
-	            	fileNames.add(fileEntry.getName());
-	            }
-	        }
-	    }
 	}
 
 	static void mergeSort(BigDecimal[] data, int dataLength) {
@@ -193,15 +228,4 @@ public class tradingAlgo {
 	        }
 	}
 	
-	static void backTest(BigDecimal VAR, BigDecimal[] data) {
-		int numFail = 0;
-		for(int x = 0; x < data.length; x++) {	
-			if(data[x].compareTo(VAR.multiply(new BigDecimal(-1),d))<0) {
-				numFail++;
-			}
-		}
-		
-		System.out.println(numFail+""+ " " + dataLength+"");
-		System.out.print(new BigDecimal(1).subtract(new BigDecimal(numFail).divide(new BigDecimal(dataLength),d)));
-	}
 }
