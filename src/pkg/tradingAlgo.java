@@ -31,21 +31,36 @@ public class tradingAlgo {
 		BigDecimal[] netProfit = new BigDecimal[dataLength];
 		BigDecimal mean = new BigDecimal("0.0");
 
-	
+		BigDecimal[][] logList = new BigDecimal[dataLength][filePaths.size()];
+		BigDecimal[] meanLog = new BigDecimal[filePaths.size()];
 		for(int x = 0; x < dataLength; x++) {
 			for(int y = 0; y < filePaths.size(); y++) {
 				profitP[x][y] = (new BigDecimal(data[x][4][y])).divide(new BigDecimal(data[x][1][y]),d );
+				logList[x][y] = new BigDecimal( Math.log(profitP[x][y].doubleValue()) );
 				if(netProfit[x]!=null) {
 					netProfit[x] = netProfit[x].add((profitP[x][y].multiply(investmentValues[y])).subtract(investmentValues[y]));
 				}
 				else {
 					netProfit[x] = (profitP[x][y].multiply(investmentValues[y])).subtract(investmentValues[y]);
 				}
-				System.out.print(netProfit[x]);
+				
+				if(meanLog[y]!=null) {
+					meanLog[y] = meanLog[y].add(logList[x][y]);
+				}
+				else {
+					meanLog[y] = logList[x][y];
+				}
+				
+				
+				
 			}
 			mean = mean.add(netProfit[x]);
 		}
 		
+		for (int x = 0; x < filePaths.size(); x++){
+			meanLog[x] = meanLog[x].divide(new BigDecimal(dataLength) ,d);
+			System.out.println(meanLog[x]);
+		}
 		mean = mean.divide(dataBD, d);	
 		
 		
