@@ -18,7 +18,7 @@ public class tradingAlgo {
 	static BigDecimal[] investmentValues;
 	static BigDecimal conf;
 	static MathContext d = new MathContext(9);
-	static int dataLength;
+	static int dataLength; 
 	
 	public static void main(String args[]) throws IOException{
 		
@@ -119,6 +119,7 @@ public class tradingAlgo {
 	
 	static void calcSD(BigDecimal[][] logList, BigDecimal[] meanLog) {
 		BigDecimal sum[] = new BigDecimal[filePaths.size()];
+		BigDecimal S[] = new BigDecimal[filePaths.size()];
 		for(int y = 0; y < filePaths.size(); y++) {
 			for(int x = 0; x < dataLength; x++) {
 				if(sum[y]!=null) {
@@ -128,7 +129,10 @@ public class tradingAlgo {
 					sum[y] = new BigDecimal(Math.pow(logList[x][y].subtract(meanLog[y]).doubleValue(),2)); 
 				}
 			}
-			System.out.println(sum[y].doubleValue()+"");
+			System.out.println("Sum (log-mean)^2: "+sum[y].doubleValue()+"");
+			S[y] = sum[y].multiply(new BigDecimal(1/(dataLength-1)));
+//			S[y] =  new BigDecimal(Math.sqrt((1/(dataLength-1))*sum[y].doubleValue()));
+			System.out.println("S.D: "+S[y]);
 		}
 	}
 
