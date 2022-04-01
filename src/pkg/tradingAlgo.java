@@ -1,4 +1,4 @@
-
+package pkg;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,7 +57,9 @@ public class tradingAlgo {
 		System.out.println("Confidence percent: " + conf);
 		System.out.println("Value at risk:" + valueAtRisk);
 		System.out.println("Daily profit mean: " + mean);
+		backTest(valueAtRisk, netProfit);
 
+		
 	}
 	
 	static void initialisation() {
@@ -174,5 +176,17 @@ public class tradingAlgo {
 		while (j < right) {
 	        bA[k++] = rA[j++];
 	        }
+	}
+	
+	static void backTest(BigDecimal VAR, BigDecimal[] data) {
+		int numFail = 0;
+		for(int x = 0; x < data.length; x++) {	
+			if(data[x].compareTo(VAR.multiply(new BigDecimal(-1),d))<0) {
+				numFail++;
+			}
+		}
+		
+		System.out.println(numFail+""+ " " + dataLength+"");
+		System.out.print(new BigDecimal(1).subtract(new BigDecimal(numFail).divide(new BigDecimal(dataLength),d)));
 	}
 }
